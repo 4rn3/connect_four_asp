@@ -127,6 +127,10 @@ def main(num_row = 6, num_col = 7, real_game = False, greedy = True):
         
         player = get_player(positions)
         
+        if len(win)>0:
+            print(f"Game over: Player {2 if player == 1 else 1} won")
+            break
+        
         if not real_game:
             board_with_valid_moves = place_valid_moves(valid_moves, board_with_chips)
             board_with_best_move = place_best_move(best_moves=best_moves, board=board_with_valid_moves, player=player)
