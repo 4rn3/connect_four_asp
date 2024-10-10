@@ -16,22 +16,23 @@ valid_move(1, Col) :- empty(1, Col). %valid if lowest row selected and it's empt
 valid_move(Row, Col) :- row(Row), Row > 1, col(Col), empty(Row, Col), occupied(Row-1, Col). %valid if selected is free and row under it is occupied
 
 %Win conditions
-win(Player) :- cell(Row, Col, Player), cell(Row, Col+1, Player), cell(Row, Col+2, Player), cell(Row, Col+3, Player). %horizontal conneft four
-win(Player) :- cell(Row, Col, Player), cell(Row+1, Col, Player), cell(Row+2, Col, Player), cell(Row+3, Col, Player). %vertical connect four
-win(Player) :- cell(Row, Col, Player), cell(Row+1, Col+1, Player), cell(Row+2, Col+2, Player), cell(Row+3, Col+3, Player). %diagonal upward
-win(Player) :- cell(Row, Col, Player), cell(Row-1, Col+1, Player), cell(Row-2, Col+2, Player), cell(Row-3, Col+3, Player). %diagonal downward
+win(Player) :- cell(Player, Row, Col), cell(Player, Row, Col+1), cell(Player, Row, Col+2), cell(Player, Row, Col+3). %horizontal conneft four
+win(Player) :- cell(Player, Row, Col), cell(Player, Row+1, Col), cell(Player, Row+2, Col), cell(Player, Row+3, Col). %vertical connect four
+win(Player) :- cell(Player, Row, Col), cell(Player, Row+1, Col+1), cell(Player, Row+2, Col+2), cell(Player, Row+3, Col+3). %diagonal upward
+win(Player) :- cell(Player, Row, Col), cell(Player, Row-1, Col+1), cell(Player, Row-2, Col+2), cell(Player, Row-3, Col+3). %diagonal downward
 
 %Strategy
 %%Immediate win moves
-winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Row, Col+1, Player), cell(Row, Col+2, Player), cell(Row, Col+3, Player). %horizontal conneft four
-winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Row+1, Col, Player), cell(Row+2, Col, Player), cell(Row+3, Col, Player). %vertical connect four
-winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Row+1, Col+1, Player), cell(Row+2, Col+2, Player), cell(Row+3, Col+3, Player). %diagonal upward
-winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Row-1, Col+1, Player), cell(Row-2, Col+2, Player), cell(Row-3, Col+3, Player). %diagonal downward
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row, Col-1), cell(Player, Row, Col-2), cell(Player, Row, Col-3). %horizontal connect four
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row-1, Col), cell(Player, Row-2, Col), cell(Player, Row-3, Col). %vertical connect four
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row-1, Col-1), cell(Player, Row-2, Col-2), cell(Player, Row-3, Col-3). %diagonal upward
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row+1, Col-1), cell(Player, Row+2, Col-2), cell(Player, Row+3, Col-3). %diagonal downward
 
 score(Row, Col, immediate_win_weight) :- winning_move(1, Row, Col). %assign a score to this category of move
 
 %%Blocking moves
-blocking_move(Row, Col) :- player(1), valid_move(Row, Col), winning_move(2, Row, Col). %if we see a winning move for our opponent take the cell
+blocking_move(Row, Col) :- valid_move(Row, Col), player(1), winning_move(2, Row, Col). %if we see a winning move for our opponent take the cell
+blocking_move(Row, Col) :- valid_move(Row, Col), player(2), winning_move(1, Row, Col).
 
 score(Row, Col, block_weight) :- blocking_move(Row, Col).
 
