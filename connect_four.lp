@@ -22,11 +22,24 @@ win(Player) :- cell(Player, Row, Col), cell(Player, Row+1, Col+1), cell(Player, 
 win(Player) :- cell(Player, Row, Col), cell(Player, Row-1, Col+1), cell(Player, Row-2, Col+2), cell(Player, Row-3, Col+3). %diagonal downward
 
 %Strategy
+
 %%Immediate win moves
-winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row, Col-1), cell(Player, Row, Col-2), cell(Player, Row, Col-3). %horizontal connect four
-winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row-1, Col), cell(Player, Row-2, Col), cell(Player, Row-3, Col). %vertical connect four
-winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row-1, Col-1), cell(Player, Row-2, Col-2), cell(Player, Row-3, Col-3). %diagonal upward
-winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row+1, Col-1), cell(Player, Row+2, Col-2), cell(Player, Row+3, Col-3). %diagonal downward
+%%% Horizontal connect four with variations
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row, Col-1), cell(Player, Row, Col-2), cell(Player, Row, Col-3). 
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row, Col+1), cell(Player, Row, Col+2), cell(Player, Row, Col+3).
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row, Col-1), cell(Player, Row, Col+1), cell(Player, Row, Col-2).
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row, Col+1), cell(Player, Row, Col-1), cell(Player, Row, Col-2).
+
+%%% Vertical connect four, only this variation is possible
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row-1, Col), cell(Player, Row-2, Col), cell(Player, Row-3, Col).
+
+%%% Diagonal win (upward-right and downward-left) with their variations
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row-1, Col-1), cell(Player, Row-2, Col-2), cell(Player, Row-3, Col-3).  % Up-right diagonal (\)
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row+1, Col-1), cell(Player, Row+2, Col-2), cell(Player, Row+3, Col-3).  % Down-left diagonal (\)
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row-1, Col+1), cell(Player, Row-2, Col+2), cell(Player, Row-3, Col+3).  % Up-left diagonal (/)
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row+1, Col+1), cell(Player, Row+2, Col+2), cell(Player, Row+3, Col+3).  % Down-right diagonal (/)
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row+1, Col+1), cell(Player, Row-1, Col-1), cell(Player, Row+2, Col+2).  % Mixed diagonal \
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row-1, Col+1), cell(Player, Row+1, Col-1), cell(Player, Row+2, Col-2).  % Mixed diagonal /
 
 score(Row, Col, immediate_win_weight) :- winning_move(1, Row, Col). %assign a score to this category of move
 
