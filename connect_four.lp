@@ -23,32 +23,6 @@ win(Player) :- cell(Player, Row, Col), cell(Player, Row-1, Col+1), cell(Player, 
 
 %Strategy
 
-%%Immediate win moves
-%%% Horizontal connect four with variations
-winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row, Col-1), cell(Player, Row, Col-2), cell(Player, Row, Col-3). 
-winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row, Col+1), cell(Player, Row, Col+2), cell(Player, Row, Col+3).
-winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row, Col-1), cell(Player, Row, Col+1), cell(Player, Row, Col-2).
-winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row, Col+1), cell(Player, Row, Col-1), cell(Player, Row, Col-2).
-
-%%% Vertical connect four, only this variation is possible
-winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row-1, Col), cell(Player, Row-2, Col), cell(Player, Row-3, Col).
-
-%%% Diagonal win (upward-right and downward-left) with their variations
-winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row-1, Col-1), cell(Player, Row-2, Col-2), cell(Player, Row-3, Col-3).  % Up-right diagonal (\)
-winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row+1, Col-1), cell(Player, Row+2, Col-2), cell(Player, Row+3, Col-3).  % Down-left diagonal (\)
-winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row-1, Col+1), cell(Player, Row-2, Col+2), cell(Player, Row-3, Col+3).  % Up-left diagonal (/)
-winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row+1, Col+1), cell(Player, Row+2, Col+2), cell(Player, Row+3, Col+3).  % Down-right diagonal (/)
-winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row+1, Col+1), cell(Player, Row-1, Col-1), cell(Player, Row+2, Col+2).  % Mixed diagonal \
-winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row-1, Col+1), cell(Player, Row+1, Col-1), cell(Player, Row+2, Col-2).  % Mixed diagonal /
-
-score(Row, Col, immediate_win_weight) :- winning_move(1, Row, Col). %assign a score to this category of move
-
-%%Blocking moves
-blocking_move(Row, Col) :- valid_move(Row, Col), player(1), winning_move(2, Row, Col). %if we see a winning move for our opponent take the cell
-blocking_move(Row, Col) :- valid_move(Row, Col), player(2), winning_move(1, Row, Col).
-
-score(Row, Col, block_weight) :- blocking_move(Row, Col).
-
 %%Set preference for center
 score(Row, 4, center_weight) :- valid_move(Row, 4). %TO DO make dynamic
 
@@ -65,6 +39,32 @@ score(Row, Col, odd_even_weight) :- valid_move(Row, Col), player(1), odd(Row).
 %%Set prefence for even rows when player 2
 score(Row, Col, odd_even_weight) :- valid_move(Row, Col), player(2), not odd(Row).
 
+%%Immediate win moves
+%%% Horizontal connect four with variations
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row, Col-1), cell(Player, Row, Col-2), cell(Player, Row, Col-3). 
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row, Col+1), cell(Player, Row, Col+2), cell(Player, Row, Col+3).
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row, Col-1), cell(Player, Row, Col+1), cell(Player, Row, Col-2).
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row, Col+1), cell(Player, Row, Col-1), cell(Player, Row, Col-2).
+
+%%% Vertical connect four, only this variation is possible
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row-1, Col), cell(Player, Row-2, Col), cell(Player, Row-3, Col).
+
+%%% Diagonal win (upward-right and downward-left) with their variations
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row-1, Col-1), cell(Player, Row-2, Col-2), cell(Player, Row-3, Col-3).
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row+1, Col-1), cell(Player, Row+2, Col-2), cell(Player, Row+3, Col-3). 
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row-1, Col+1), cell(Player, Row-2, Col+2), cell(Player, Row-3, Col+3).  
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row+1, Col+1), cell(Player, Row+2, Col+2), cell(Player, Row+3, Col+3). 
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row+1, Col+1), cell(Player, Row-1, Col-1), cell(Player, Row+2, Col+2).  
+winning_move(Player, Row, Col) :- valid_move(Row, Col), cell(Player, Row-1, Col+1), cell(Player, Row+1, Col-1), cell(Player, Row+2, Col-2).  
+
+score(Row, Col, immediate_win_weight) :- winning_move(1, Row, Col). %assign a score to this category of move
+
+%%Blocking moves
+blocking_move(Row, Col) :- valid_move(Row, Col), player(1), winning_move(2, Row, Col). %if we see a winning move for our opponent take the cell
+blocking_move(Row, Col) :- valid_move(Row, Col), player(2), winning_move(1, Row, Col).
+
+score(Row, Col, block_weight) :- blocking_move(Row, Col).
+
 %%Combine scores
 total_score(Row, Col, Total) :- valid_move(Row, Col), Total = #sum{S : score(Row, Col, S)}.
 #maximize{Total, Row, Col : total_score(Row, Col, Total)}.
@@ -73,3 +73,4 @@ best_move(Row, Col) :- total_score(Row, Col, Total), Total = #max{T : total_scor
 #show valid_move/2.
 #show best_move/2.
 #show win/1.
+#show score/3.
