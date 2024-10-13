@@ -1,0 +1,14 @@
+clingo version 5.7.1
+Reading from connect_four_input.lp ...
+Solving...
+Answer: 1
+best_move(2,5) valid_move(2,5) valid_move(3,2) valid_move(4,3) valid_move(4,7) valid_move(5,1) valid_move(5,6) valid_move(6,4)
+Optimization: -180
+OPTIMUM FOUND
+
+Models       : 1
+  Optimum    : yes
+Optimization : -180
+Calls        : 1
+Time         : 0.008s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.000s
