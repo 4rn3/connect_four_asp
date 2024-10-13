@@ -102,7 +102,7 @@ def run_clingo():
 
 def get_user_move():
     move = input("Enter the row, col you want to place your chip (i.e. 1,1) or q to quit:")
-    
+    move.replace(";",",")
     if move == 'q':
         return False
     
@@ -113,10 +113,19 @@ def get_user_move():
     write_move_to_file(player=1, best_move_x=x, best_move_y=y)
     return True
 
+def clean_input_file(file_path="./connect_four_input.lp"):
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+    
+    with open(file_path, 'w') as file:
+        for line in lines:
+            if not line.strip().startswith('cell'):
+                file.write(line)
+
 def main(num_row = 6, num_col = 7, real_game = False, greedy = True):
-    
+    clean_input_file()
+
     game_loop = True
-    
     while game_loop:
         game_loop = get_user_move()
         run_clingo()
@@ -128,7 +137,7 @@ def main(num_row = 6, num_col = 7, real_game = False, greedy = True):
         player = get_player(positions)
         
         if len(win)>0:
-            print(f"Game over: Player {2 if player == 1 else 1} won")
+            #print(f"Game over: Player {player} won") #Does not work
             break
         
         if not real_game:
