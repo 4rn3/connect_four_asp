@@ -24,10 +24,10 @@ win(Player) :- cell(Player, Row, Col), cell(Player, Row-1, Col+1), cell(Player, 
 %Strategy
 
 %%Set preference for center
-score(Row, 4, center_weight) :- valid_move(Row, 4). %TO DO make dynamic
+score(Row, 4, center_weight) :- valid_move(Row, 4).
 
 %%%Gradually decrease weight for rows further from the center
-score(Row, Col, center_weight) :- valid_move(Row, Col), Col = 3; Col = 5.
+score(Row, Col, 3) :- valid_move(Row, Col), Col = 3; Col = 5.
 score(Row, Col, 2) :- valid_move(Row, Col), Col = 2; Col = 6. %to do make decrease dynamic
 score(Row, Col, 1) :- valid_move(Row, Col), Col = 1; Col = 7.
 
